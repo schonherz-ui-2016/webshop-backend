@@ -12,7 +12,7 @@ module.exports = {
       return Q.all([Q.nfcall(bcrypt.compare, req.body.password, user.password), user]);
     }).then(_.spread(function (result, user) {
       if (!result) return Q.reject();
-      return Q.nfcall(jwt.sign, {id: user.id}, sails.config.secret, {});
+      return Q.nfcall(jwt.sign, {id: user.id}, sails.config.secret, {expiresIn: sails.config.jwtExpiresIn});
     })).then(function (token) {
       res.send({token: token});
     }).catch(function(err) {
@@ -22,9 +22,7 @@ module.exports = {
 
   register: function (req, res) {
     var sails = req._sails;
-    Q.nfcall(bcrypt.genSalt, 10).then(function (salt) {
-      return Q.nfcall(bcrypt.hash, req.body.password, salt);
-    }).then(function(hash) {
+    Q.nfcall(bcrypt.hash, req.body.password, 10).then(function(hash) {
       return Q.promise(function(resolve, reject) {
         sails.models.user.create({
           email: req.body.email,
