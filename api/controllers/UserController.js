@@ -33,7 +33,7 @@ module.exports = {
         });
       });
     }).then(function (user) {
-      return res.send(user.id);
+      return res.send(JSON.stringify(user.id));
     }).catch(function(err) {
       res.status(500).send(err);
     });
