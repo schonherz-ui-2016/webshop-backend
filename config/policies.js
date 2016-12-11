@@ -2,7 +2,8 @@
 module.exports.policies = {
   '*': 'auth',
 	UserController: {
-    'login': true
+    'login': true,
+    'register': true
   },
   ProductController: {
     'find': true,
