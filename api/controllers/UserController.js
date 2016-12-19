@@ -9,25 +9,30 @@ module.exports = {
   login: function (req, res) {
     var sails = req._sails;
     Q.nfcall(sails.models.user.findOne, {email: req.body.email}).then(function (user) {
+      if (!user) throw new Error('no such user or wrong password');
       return Q.all([Q.nfcall(bcrypt.compare, req.body.password, user.password), user]);
     }).then(_.spread(function (result, user) {
-      if (!result) return Q.reject();
+      if (!result) throw new Error('no such user or wrong password');
       return Q.nfcall(jwt.sign, {id: user.id}, sails.config.secret, {expiresIn: sails.config.jwtExpiresIn});
     })).then(function (token) {
       res.send({token: token});
     }).catch(function(err) {
-      res.status(500).send(err);
+      res.status(500).send(JSON.stringify(err.message));
     });
   },
 
   register: function (req, res) {
     var sails = req._sails;
-    Q.nfcall(bcrypt.hash, req.body.password, 10).then(function(hash) {
+    Q.promise(function(resolve, reject){
+      if(!req.body.password) throw new Error('no password provided');
+      resolve();
+    }).then(function() {
+      return Q.nfcall(bcrypt.hash, req.body.password, 10);
+    }).then(function(hash) {
       return Q.promise(function(resolve, reject) {
-        sails.models.user.create({
-          email: req.body.email,
-          password: hash
-        }).exec(function(err, user) {
+        delete req.body.id;
+        req.body.password = hash;
+        sails.models.user.create(req.body).exec(function(err, user) {
           if(err) return reject(err);
           return resolve(user);
         });
@@ -35,12 +40,14 @@ module.exports = {
     }).then(function (user) {
       return res.send(JSON.stringify(user.id));
     }).catch(function(err) {
-      res.status(500).send(err);
+      res.status(500).send(JSON.stringify(err.message));
     });
   },
 
   me: function(req, res) {
-    res.send(JSON.stringify(req.user));
+    Q.nfcall(sails.models.user.findOne, {id: req.user}).then(function (user) {
+      res.send(JSON.stringify(user));
+    });
   }
 };
 
