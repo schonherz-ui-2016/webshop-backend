@@ -1,9 +1,11 @@
 
 var passport = require('passport');
+var context = require('request-context');
 
 module.exports.http = {
   middleware: {
     order: [
+      'context',
       'startRequestTimer',
       'passportInit',
       'bodyParser',
@@ -16,6 +18,7 @@ module.exports.http = {
       '404',
       '500'
     ],
-    passportInit: passport.initialize()
+    passportInit: passport.initialize(),
+    context: context.middleware('request')
   }
 };

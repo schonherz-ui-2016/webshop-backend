@@ -1,3 +1,4 @@
+var auth = require('./auth/auth');
 
 module.exports = {
   attributes: {
@@ -10,11 +11,20 @@ module.exports = {
       type: 'string',
       required: true
     },
-    toJSON: function() {
+    orders: {
+      collection: 'Order',
+      via: 'user'
+    },
+    roles: {
+      collection: 'Role',
+      via: 'user'
+    },
+    toJSON: function () {
       var obj = this.toObject();
       delete obj.password;
       return obj;
-    }
+    },
+    beforeUpdate: auth.or(auth.isOwn('id'), auth.hasRole('admin'))
   }
 };
 

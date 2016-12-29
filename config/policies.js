@@ -1,6 +1,6 @@
 
 module.exports.policies = {
-  '*': 'auth',
+  '*': ['auth', 'context'],
 	UserController: {
     'login': true,
     'register': true

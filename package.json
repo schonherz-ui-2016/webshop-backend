@@ -26,6 +26,7 @@
     "passport-jwt": "^2.2.1",
     "q": "^1.4.1",
     "rc": "1.0.1",
+    "request-context": "^1.0.0",
     "sails": "~0.12.11",
     "sails-disk": "~0.10.9",
     "sails-fixtures": "^1.0.8"

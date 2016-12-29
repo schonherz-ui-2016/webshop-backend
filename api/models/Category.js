@@ -1,3 +1,4 @@
+var auth = require('./auth/auth');
 
 module.exports = {
   attributes: {
@@ -12,6 +13,8 @@ module.exports = {
       collection: 'Category',
       via: 'parent'
     }
-  }
+  },
+  beforeCreate: auth.hasRole('admin'),
+  beforeUpdate: auth.hasRole('admin')
 };
 
