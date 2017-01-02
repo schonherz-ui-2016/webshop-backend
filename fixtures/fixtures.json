@@ -7,11 +7,16 @@
                 "email": "admin@example.com",
                 "password": "$2a$10$k2VSa3b4olnQObndvnSOfuTa/sZ7Dv0mh1rs/WZ6kHR8HXcHg9yHS"
             }
-        ],
-        "roles": [
-          {
-            "role": "admin"
-          }
+        ]
+    },
+    {
+        "model": "role",
+        "items": [
+            {
+                "id": 1,
+                "user": 1,
+                "role": "admin"
+            }
         ]
     },
     {
